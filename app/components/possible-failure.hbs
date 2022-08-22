@@ -1,0 +1,22 @@
+<label>
+  Stop Propagation
+  <input type='checkbox' {{on 'input' this.updatePropagation}} />
+</label>
+
+<GlimmerButton id='parentButton' @onClick={{this.onParentClick}}>Click Parent
+  <ClassicButton
+    id='childButton'
+    @preventEventPropagation={{this.preventEventPropagation}}
+    @onClick={{this.onChildClick}}
+  >Click Child</ClassicButton>
+</GlimmerButton>
+
+<p>
+  <b>Parent click count:</b>
+  {{this.parentClicked}}
+</p>
+
+<p>
+  <b>Child click count:</b>
+  {{this.childClicked}}
+</p>

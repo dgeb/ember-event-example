@@ -11,20 +11,10 @@ export default Component.extend({
   onMouseDown: null,
 
   click(event) {
-    console.log('ClassicButton#click', event);
     event.preventDefault();
     if (this.preventEventPropagation) {
       event.stopPropagation();
     }
     this.onClick?.(event);
-  },
-
-  mouseDown(event) {
-    console.log('ClassicButton#mouseDown', event);
-    event.preventDefault();
-    if (this.preventEventPropagation) {
-      event.stopPropagation();
-    }
-    this.onMouseDown?.(event);
   },
 });

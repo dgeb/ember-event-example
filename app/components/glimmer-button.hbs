@@ -1,8 +1,3 @@
-<button
-  {{on "click" this.click}}
-  {{on "mousedown" this.mouseDown}}
-  type="button"
-  ...attributes
->
+<button {{on 'click' this.click}} type='button' ...attributes>
   {{yield}}
 </button>
