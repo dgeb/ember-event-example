@@ -83,10 +83,6 @@ function reopenComponent(app) {
       }
     },
 
-    has(name) {
-      return this._superHas(name);
-    },
-
     // eslint-disable-next-line ember/no-component-lifecycle-hooks
     didInsertElement(...args) {
       this._super(...args);
