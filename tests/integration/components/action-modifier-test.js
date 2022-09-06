@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { click, render } from '@ember/test-helpers';
+import { click, doubleClick, render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
 module('Integration | Component | action modifier test', function (hooks) {
@@ -38,6 +38,23 @@ module('Integration | Component | action modifier test', function (hooks) {
     await click('#childButton');
 
     assert.strictEqual(this.childClicked, 0);
+  });
+
+  test('`action` can specify an event other than `click` via `on`', async function (assert) {
+    let i = 0;
+
+    this.setProperties({
+      onDblClick: () => this.set('dblClicked', i++),
+      dblClicked: undefined,
+    });
+
+    await render(hbs`
+      <button id="childButton" {{action this.onDblClick on='dblclick'}} />
+    `);
+
+    await doubleClick('#childButton');
+
+    assert.strictEqual(this.dblClicked, 0);
   });
 
   module('nested `action` usage inside classic', function () {

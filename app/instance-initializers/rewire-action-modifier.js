@@ -1,7 +1,7 @@
 import { modifier } from 'ember-modifier';
 
 const actionModifier = modifier(
-  (element, [context, callback, ...args]) => {
+  (element, [context, callback, ...args], { on }) => {
     const handler = (event) => {
       const fn = typeof callback === 'string' ? context[callback] : callback;
       if (fn === undefined) {
@@ -17,9 +17,7 @@ const actionModifier = modifier(
       }
     };
 
-    // TODO - Allow for events other than 'click' (e.g. `on="submit"`)
-    const eventName = 'click';
-
+    const eventName = on ?? 'click';
     element.addEventListener(eventName, handler);
 
     return () => {
