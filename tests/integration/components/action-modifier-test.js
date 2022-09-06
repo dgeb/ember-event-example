@@ -3,8 +3,42 @@ import { setupRenderingTest } from 'ember-qunit';
 import { click, render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Component | action helper test', function (hooks) {
+module('Integration | Component | action modifier test', function (hooks) {
   setupRenderingTest(hooks);
+
+  test('`action` can target a function', async function (assert) {
+    let i = 0;
+
+    this.setProperties({
+      onChildClick: () => this.set('childClicked', i++),
+      childClicked: undefined,
+    });
+
+    await render(hbs`
+      <button id="childButton" {{action this.onChildClick}} />
+    `);
+
+    await click('#childButton');
+
+    assert.strictEqual(this.childClicked, 0);
+  });
+
+  test('`action` can target a method on the current context by name', async function (assert) {
+    let i = 0;
+
+    this.setProperties({
+      onChildClick: () => this.set('childClicked', i++),
+      childClicked: undefined,
+    });
+
+    await render(hbs`
+      <button id="childButton" {{action 'onChildClick'}} />
+    `);
+
+    await click('#childButton');
+
+    assert.strictEqual(this.childClicked, 0);
+  });
 
   module('nested `action` usage inside classic', function () {
     test('it handles click events and allows propagation by default', async function (assert) {
