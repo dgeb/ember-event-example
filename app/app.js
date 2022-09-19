@@ -68,6 +68,11 @@ function reopenComponent(app) {
     }
   }
 
+  const allEventMethods = {};
+  for (const [event, methodName] of Object.entries(EVENTS)) {
+    allEventMethods[methodName] = event;
+  }
+
   Component.reopen({
     /**
      * @param {string | typeof INTERNAL} name
@@ -88,24 +93,43 @@ function reopenComponent(app) {
       this._super(...args);
 
       const proto = Object.getPrototypeOf(this);
-      let events = COMPONENT_SETUP.get(proto);
+      let protoEvents = COMPONENT_SETUP.get(proto);
 
-      if (!events) {
-        events = [];
-        COMPONENT_SETUP.set(proto, events);
+      if (!protoEvents) {
+        protoEvents = [];
+        COMPONENT_SETUP.set(proto, protoEvents);
 
-        for (const [event, methodName] of Object.entries(allEvents)) {
-          if (this.has(methodName)) {
-            events.push({ event, method: methodName });
+        for (const method of Object.keys(allEventMethods)) {
+          if (this.has(method)) {
+            const event = allEventMethods[method];
+            protoEvents.push({ event, method });
           }
         }
       }
 
-      for (const { event, method } of events) {
-        this.element.addEventListener(event, (event) => {
-          return this.trigger(INTERNAL, method, event);
-        });
+      addComponentEventListeners(this, protoEvents);
+
+      const ownProps = Reflect.ownKeys(this);
+      let ownEvents;
+      for (const method of Object.keys(allEventMethods)) {
+        if (ownProps.includes(method)) {
+          const event = allEventMethods[method];
+          ownEvents ??= [];
+          ownEvents.push({ event, method });
+        }
+      }
+
+      if (ownEvents) {
+        addComponentEventListeners(this, ownEvents);
       }
     },
   });
+}
+
+function addComponentEventListeners(component, events) {
+  for (const { event, method } of events) {
+    component.element.addEventListener(event, (event) => {
+      return component.trigger.call(component, INTERNAL, method, event);
+    });
+  }
 }
